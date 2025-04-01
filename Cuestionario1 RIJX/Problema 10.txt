@@ -1,0 +1,26 @@
+# Cargar librerías necesarias
+library(tidyverse)
+
+# Crear dataset con variable categórica
+datos_encuesta <- data.frame(
+  ID = 1:10,
+  Satisfaccion = c("baja", "media", "alta", "media", "baja", "alta", "alta", "baja", "media", "alta")
+)
+
+# 1. Convertir la variable categórica en factor
+datos_encuesta$Satisfaccion <- as.factor(datos_encuesta$Satisfaccion)
+print("Datos con factor:")
+print(datos_encuesta)
+
+# 2. Aplicar One-Hot Encoding
+one_hot <- model.matrix(~ Satisfaccion - 1, data = datos_encuesta)
+print("One-Hot Encoding:")
+print(one_hot)
+
+# 3. Evaluar impacto en un modelo de regresión
+# Simulación de una variable de respuesta
+datos_encuesta$Puntaje <- c(3, 5, 9, 6, 2, 8, 7, 3, 6, 9)
+
+# Crear modelo de regresión lineal
+modelo <- lm(Puntaje ~ ., data = as.data.frame(one_hot))
+summary(modelo)

@@ -1,0 +1,33 @@
+# Cargar librerías necesarias
+library(tidyverse)
+
+# Crear dataset de indicadores financieros
+datos_financieros <- data.frame(
+  Empresa = c("A", "B", "C", "D", "E"),
+  Ingresos = c(50000, 120000, 75000, 200000, 95000),
+  Utilidad = c(5000, 20000, 10000, 50000, 15000)
+)
+
+# 1. Aplicar estandarización (media = 0, desviación estándar = 1)
+datos_financieros_estandarizados <- datos_financieros %>%
+  mutate(
+    Ingresos_Estand = scale(Ingresos),
+    Utilidad_Estand = scale(Utilidad)
+  )
+
+# 2. Aplicar normalización (escala entre 0 y 1)
+datos_financieros_normalizados <- datos_financieros %>%
+  mutate(
+    Ingresos_Norm = (Ingresos - min(Ingresos)) / (max(Ingresos) - min(Ingresos)),
+    Utilidad_Norm = (Utilidad - min(Utilidad)) / (max(Utilidad) - min(Utilidad))
+  )
+
+# 3. Comparar datasets
+print("Dataset original:")
+print(datos_financieros)
+
+print("Dataset con estandarización:")
+print(datos_financieros_estandarizados)
+
+print("Dataset con normalización:")
+print(datos_financieros_normalizados)

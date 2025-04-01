@@ -1,0 +1,43 @@
+# Cargar librerías necesarias
+library(tidyverse)
+
+# Crear dataset con valores faltantes
+datos_pacientes <- data.frame(
+  ID = 1:10,
+  Presion_Arterial = c(120, 135, NA, 140, 125, NA, 130, 128, 138, NA),
+  Glucosa = c(90, NA, 110, 105, NA, 98, 115, NA, 108, 100)
+)
+
+# 1. Identificar valores faltantes
+print("Valores faltantes por columna:")
+print(colSums(is.na(datos_pacientes)))
+
+# 2. Estrategia 1: Eliminar filas con valores faltantes
+datos_sin_na <- na.omit(datos_pacientes)
+
+# 3. Estrategia 2: Imputación con la media
+datos_imputados <- datos_pacientes %>%
+  mutate(
+    Presion_Arterial = ifelse(is.na(Presion_Arterial), mean(Presion_Arterial, na.rm = TRUE), Presion_Arterial),
+    Glucosa = ifelse(is.na(Glucosa), mean(Glucosa, na.rm = TRUE), Glucosa)
+  )
+
+# 4. Estrategia 3: Interpolación lineal
+datos_interpolados <- datos_pacientes %>%
+  mutate(
+    Presion_Arterial = zoo::na.approx(Presion_Arterial, na.rm = FALSE),
+    Glucosa = zoo::na.approx(Glucosa, na.rm = FALSE)
+  )
+
+# Comparar datasets
+print("Dataset original:")
+print(datos_pacientes)
+
+print("Dataset sin valores faltantes (eliminación):")
+print(datos_sin_na)
+
+print("Dataset con imputación por media:")
+print(datos_imputados)
+
+print("Dataset con interpolación lineal:")
+print(datos_interpolados)

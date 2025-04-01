@@ -1,0 +1,47 @@
+# Cargar librerías necesarias
+library(tidyverse)
+
+# Crear dataset de producción con valores atípicos
+datos_produccion <- data.frame(
+  Dia = 1:15,
+  Produccion = c(100, 105, 110, 120, 95, 500, 130, 125, 110, 115, 140, 600, 130, 120, 135) # 500 y 600 son outliers
+)
+
+# 1. Visualizar outliers con diagrama de caja
+p <- ggplot(datos_produccion, aes(y = Produccion)) + 
+  geom_boxplot(fill = "skyblue") + 
+  ggtitle("Detección de Outliers en la Producción")
+print(p)
+
+# 2. Determinar outliers con el rango intercuartil (IQR)
+Q1 <- quantile(datos_produccion$Produccion, 0.25)
+Q3 <- quantile(datos_produccion$Produccion, 0.75)
+IQR <- Q3 - Q1
+limite_inferior <- Q1 - 1.5 * IQR
+limite_superior <- Q3 + 1.5 * IQR
+
+outliers <- datos_produccion %>% 
+  filter(Produccion < limite_inferior | Produccion > limite_superior)
+print("Valores atípicos detectados:")
+print(outliers)
+
+# 3. Aplicar estrategias para manejar outliers
+# a) Eliminación de outliers
+datos_sin_outliers <- datos_produccion %>% 
+  filter(Produccion >= limite_inferior & Produccion <= limite_superior)
+
+# b) Sustitución de outliers por la mediana
+mediana_produccion <- median(datos_produccion$Produccion)
+datos_imputados <- datos_produccion %>% 
+  mutate(Produccion = ifelse(Produccion < limite_inferior | Produccion > limite_superior, 
+                             mediana_produccion, Produccion))
+
+# 4. Comparar datasets antes y después del tratamiento
+print("Dataset original:")
+print(datos_produccion)
+
+print("Dataset sin outliers (eliminación):")
+print(datos_sin_outliers)
+
+print("Dataset con imputación por mediana:")
+print(datos_imputados)

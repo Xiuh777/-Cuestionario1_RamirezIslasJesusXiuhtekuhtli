@@ -1,0 +1,31 @@
+# Cargar librerías necesarias
+library(tidyverse)
+
+# Crear dataset de ejemplo
+interacciones <- data.frame(
+  Usuario = c("A123", "B456", "C789", "D101", "E112"),
+  Plataforma = c("Facebook", "Instagram", "Twitter", "Facebook", "Instagram"),
+  Likes = c(120, 340, 560, 90, 300),
+  Comentarios = c(30, 50, 80, 10, 40),
+  Fecha = c("2025-03-25", "2025-03-26", "2025-03-27", "2025-03-28", "2025-03-29")
+)
+
+# 1. Convertir variables categóricas en factores
+interacciones$Plataforma <- as.factor(interacciones$Plataforma)
+
+# 2. Normalizar valores numéricos (Likes y Comentarios)
+interacciones <- interacciones %>%
+  mutate(
+    Likes_norm = scale(Likes),
+    Comentarios_norm = scale(Comentarios)
+  )
+
+# 3. Crear nuevas variables derivadas (Ejemplo: Interacciones Totales)
+interacciones <- interacciones %>%
+  mutate(Interacciones_Totales = Likes + Comentarios)
+
+# 4. Convertir fechas en formato adecuado
+interacciones$Fecha <- as.Date(interacciones$Fecha)
+
+# Mostrar el dataset transformado
+print(interacciones)

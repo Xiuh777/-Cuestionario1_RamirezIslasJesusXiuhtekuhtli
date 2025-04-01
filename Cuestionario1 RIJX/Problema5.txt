@@ -1,0 +1,44 @@
+# Cargar librerías necesarias
+library(tidyverse)
+library(caret)  # Para funciones de machine learning
+
+# Crear dataset de encuesta
+datos_encuesta <- data.frame(
+  ID = 1:5,
+  Genero = c("Masculino", "Femenino", "Femenino", "Masculino", "No especificado"),
+  Satisfaccion = c("Alta", "Media", "Baja", "Alta", "Media")
+)
+
+# 1. Convertir variables cualitativas en factores
+datos_encuesta$Genero <- as.factor(datos_encuesta$Genero)
+datos_encuesta$Satisfaccion <- as.factor(datos_encuesta$Satisfaccion)
+
+# 2. Aplicar Label Encoding (asignar valores numéricos a cada categoría)
+datos_encuesta$Genero_Label <- as.numeric(datos_encuesta$Genero)
+datos_encuesta$Satisfaccion_Label <- as.numeric(datos_encuesta$Satisfaccion)
+
+# 3. Aplicar One-Hot Encoding (convertir categorías en columnas binarias)
+datos_encoded <- datos_encuesta %>%
+  mutate(
+    Genero_Masculino = ifelse(Genero == "Masculino", 1, 0),
+    Genero_Femenino = ifelse(Genero == "Femenino", 1, 0),
+    Genero_NoEspecificado = ifelse(Genero == "No especificado", 1, 0)
+  )
+
+# Mostrar resultados
+print("Dataset original:")
+print(datos_encuesta)
+
+print("Dataset con One-Hot Encoding:")
+print(datos_encoded)
+
+# Comparar impacto en modelos de Machine Learning
+modelo_label <- train(Satisfaccion_Label ~ Genero_Label, data = datos_encuesta, method = "lm")
+modelo_onehot <- train(Satisfaccion_Label ~ Genero_Masculino + Genero_Femenino + Genero_NoEspecificado, 
+                       data = datos_encoded, method = "lm")
+
+print("Resultados con Label Encoding:")
+print(summary(modelo_label))
+
+print("Resultados con One-Hot Encoding:")
+print(summary(modelo_onehot))

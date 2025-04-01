@@ -1,0 +1,34 @@
+# Cargar librerías necesarias
+library(tidyverse)
+
+# Crear dataset de clientes
+datos_clientes <- data.frame(
+  Cliente_ID = c(1, 2, 3, 4, 5),
+  Nombre = c("Ana", "Luis", "Carlos", "Sofía", "Miguel"),
+  Edad = c(28, 34, 45, 29, 40)
+)
+
+# Crear dataset de historial de compras
+datos_compras <- data.frame(
+  Cliente_ID = c(1, 2, 2, 3, 5, 5, 5),
+  Producto = c("Laptop", "Teléfono", "Tablet", "Monitor", "Teclado", "Mouse", "Impresora"),
+  Precio = c(1000, 500, 300, 200, 50, 30, 150)
+)
+
+# 1. Fusionar datos usando left_join()
+datos_fusionados <- left_join(datos_clientes, datos_compras, by = "Cliente_ID")
+
+# 2. Detectar y eliminar duplicados
+datos_sin_duplicados <- distinct(datos_fusionados)
+
+# 3. Verificar inconsistencias
+print("Dataset fusionado:")
+print(datos_fusionados)
+
+print("Dataset sin duplicados:")
+print(datos_sin_duplicados)
+
+# 4. Identificar valores duplicados en la clave Cliente_ID
+duplicados <- datos_fusionados %>% filter(duplicated(Cliente_ID))
+print("Clientes con posibles duplicados:")
+print(duplicados)

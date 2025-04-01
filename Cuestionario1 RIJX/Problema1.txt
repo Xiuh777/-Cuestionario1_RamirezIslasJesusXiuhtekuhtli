@@ -1,0 +1,29 @@
+# Cargar librerías necesarias
+library(tidyverse)
+
+# Crear dataset de ejemplo
+ventas <- data.frame(
+  ID = c(1, 2, 3, 4, 5),
+  Sucursal = c("A", "B", "A", "B", "A"),
+  Producto = c("Televisor", "laptop", "Televisor", "TeleVisor", "Laptop"),
+  Precio = c(500, 800, NA, 500, 800),
+  Cantidad = c(2, 1, 3, 2, 1),
+  Total_Venta = c(1000, 800, 1500, 1000, 800)
+)
+
+# 1. Identificar y manejar valores faltantes
+# Reemplazar valores NA en columnas numéricas con la media de la columna
+ventas <- ventas %>%
+  mutate(across(where(is.numeric), ~ifelse(is.na(.), mean(., na.rm = TRUE), .)))
+
+# 2. Detectar y eliminar valores duplicados
+ventas <- ventas %>%
+  distinct()
+
+# 3. Estandarizar nombres de productos (convertir todo a minúsculas y eliminar espacios extra)
+ventas$Producto <- ventas$Producto %>%
+  tolower() %>%
+  str_trim()
+
+# Mostrar el dataset limpio
+print(ventas)

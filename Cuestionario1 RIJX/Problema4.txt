@@ -1,0 +1,37 @@
+# Cargar librerías necesarias
+library(tidyverse)
+
+# Crear dataset de transacciones
+transacciones <- data.frame(
+  ID = 1:10,
+  Monto = c(50, 200, 150, 300, 500, 10000, 700, 50, 450, 8000)
+)
+
+# 1. Identificar outliers mediante diagramas de caja
+boxplot(transacciones$Monto, main="Diagrama de caja de Monto", col="lightblue")
+
+# 2. Calcular el rango intercuartil (IQR) y determinar límites
+Q1 <- quantile(transacciones$Monto, 0.25)
+Q3 <- quantile(transacciones$Monto, 0.75)
+IQR_value <- Q3 - Q1
+
+limite_inferior <- Q1 - 1.5 * IQR_value
+limite_superior <- Q3 + 1.5 * IQR_value
+
+print(paste("Límite inferior:", limite_inferior))
+print(paste("Límite superior:", limite_superior))
+
+# 3. Manejo de valores atípicos: Reemplazarlos por la mediana
+mediana_monto <- median(transacciones$Monto)
+transacciones$Monto <- ifelse(transacciones$Monto < limite_inferior | 
+                               transacciones$Monto > limite_superior, 
+                               mediana_monto, 
+                               transacciones$Monto)
+
+# 4. Comparar estadísticas antes y después
+summary_original <- summary(transacciones$Monto)
+print("Estadísticas después del tratamiento:")
+print(summary_original)
+
+# Nuevo diagrama de caja después del tratamiento
+boxplot(transacciones$Monto, main="Diagrama de caja después del tratamiento", col="lightgreen")

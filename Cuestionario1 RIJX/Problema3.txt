@@ -1,0 +1,41 @@
+# Cargar librerías necesarias
+library(tidyverse)
+
+# Crear dataset de clientes
+clientes <- data.frame(
+  Cliente_ID = c(101, 102, 103, 104, 105),
+  Nombre = c("Ana", "Luis", "Carlos", "Marta", "Sofía"),
+  Edad = c(25, 32, 40, 29, 35)
+)
+
+# Crear dataset de compras
+compras <- data.frame(
+  Cliente_ID = c(101, 102, 103, 106, 107),
+  Producto = c("Laptop", "Celular", "Tablet", "Smartwatch", "Cámara"),
+  Monto = c(1200, 800, 500, 300, 450)
+)
+
+# 1. Explorar los datasets
+print("Clientes:")
+print(clientes)
+print("Compras:")
+print(compras)
+
+# 2. Unir los datasets por Cliente_ID
+fusionado <- left_join(clientes, compras, by = "Cliente_ID")
+
+# 3. Verificar claves duplicadas y valores faltantes
+duplicados <- duplicated(fusionado$Cliente_ID)
+print("Clientes duplicados:")
+print(fusionado[duplicados, ])
+
+faltantes <- sum(is.na(fusionado))
+print(paste("Número de valores faltantes:", faltantes))
+
+# 4. Resumen de la fusión
+resumen <- fusionado %>%
+  group_by(Producto) %>%
+  summarise(Monto_Promedio = mean(Monto, na.rm = TRUE))
+
+print("Resumen de compras:")
+print(resumen)
